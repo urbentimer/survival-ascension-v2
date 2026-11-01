@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Survival Ascension — Online Co-op</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,Arial,sans-serif;background:#101914;color:#e8eee8}*{box-sizing:border-box}body{margin:0;padding:18px;background:radial-gradient(ellipse at top,#24372b,#101914 65%);min-height:100vh}.wrap{max-width:1100px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.muted{color:#a9b8aa}.tag{font-size:11px;letter-spacing:.15em;color:#a8d5a7}.brand{font-size:clamp(22px,4vw,32px);font-weight:950;letter-spacing:.08em}.card{background:#18251e;border:1px solid #35483a;border-radius:14px;padding:14px;margin:12px 0}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{background:#1c2b22;border:1px solid #35483a;padding:10px;border-radius:10px;min-width:0}.stat small{display:block;color:#a9b8aa;font-size:10px}.stat b{font-size:18px}.button,input{border:1px solid #50634f;background:#24352a;color:#f1f5ef;padding:11px 13px;border-radius:9px;font:inherit}.button{cursor:pointer;font-weight:750}.button.primary{background:#397c50;border-color:#397c50}.button:disabled{opacity:.4;cursor:not-allowed}input{min-width:0;width:100%}canvas{display:block;width:100%;height:auto;background:#142119;border:1px solid #405443;border-radius:12px;touch-action:none}.game{position:relative}.scoreboard{position:absolute;top:12px;right:12px;z-index:4;max-width:min(360px,48%);background:#0d1710ee;border:1px solid #d6b85c;border-radius:10px;padding:10px;color:#f4f0dc;font-size:12px;max-height:70%;overflow:auto}.scoreboard h3{margin:0 0 7px;color:#f4d36a}.scoreboard table{width:100%;border-collapse:collapse}.scoreboard td,.scoreboard th{padding:4px 6px;text-align:left;border-bottom:1px solid #ffffff20}.scoreboard .leader{color:#ffdf65;font-weight:900}.scorehint{font-size:11px;color:#b8c9b7;margin-top:6px}.overlay{position:absolute;inset:0;background:#07100be9;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:16px}.modal{max-width:480px;width:100%;background:#1a2a20;border:1px solid #526653;border-radius:14px;padding:22px;text-align:center}.hidden{display:none!important}.playerlist{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#26392c;border:1px solid #415641;border-radius:99px;padding:6px 10px;font-size:12px}.bar{height:8px;background:#344438;border-radius:20px;overflow:hidden}.bar span{display:block;height:100%;background:#58ce8b}.upgrade{width:100%;text-align:left;margin:5px 0;background:#24352a}.notice{min-height:22px;font-size:13px;color:#b8c9b7}.footer{font-size:12px;color:#9eae9e;line-height:1.6}@media(max-width:600px){body{padding:10px}.stats{grid-template-columns:repeat(3,1fr)}.stat b{font-size:15px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div><div class="tag">8-PLAYER PRIVATE CO-OP · ZOMBIE SURVIVAL</div><div class="brand">☣ SURVIVAL ASCENSION</div></div><div id="connection" class="pill">Not connected</div></header>
+<section class="card" id="lobby">
+ <h2 style="margin:0 0 8px">Private co-op room</h2><p class="muted" style="margin:0 0 14px;font-size:13px">Create a room and share its invitation code. Friends join using the code—rooms are not listed publicly.</p>
+ <div class="row"><input id="name" maxlength="18" placeholder="Your survivor name" value="Survivor"><button class="button primary" id="create">Create room</button></div>
+ <div class="row" style="margin-top:9px"><input id="roomCode" placeholder="Enter room code"><button class="button" id="join">Join room</button></div>
+ <div id="invite" class="card hidden"><div class="muted" style="font-size:11px">YOUR ROOM INVITATION CODE</div><div id="codeDisplay" style="font-size:28px;font-weight:900;letter-spacing:.12em;margin:5px 0"></div><button class="button" id="copy">Copy code</button><span class="muted" id="roomCount" style="margin-left:8px"></span></div>
+ <div id="lobbyPlayers" class="playerlist" style="margin-top:10px"></div>
+ <button class="button primary hidden" id="startGame" style="width:100%;margin-top:12px">START THE APOCALYPSE</button>
+ <div class="notice" id="lobbyMessage" style="margin-top:10px">Connect to a room to assemble your team.</div>
+</section>
+<section id="gameArea" class="hidden">
+ <div class="stats card"><div class="stat"><small>STAGE</small><b id="stage">1</b></div><div class="stat"><small>LEVEL</small><b id="level">1</b></div><div class="stat"><small>HEALTH</small><b id="hp">100</b></div><div class="stat"><small>GOLD</small><b id="gold">0</b></div><div class="stat"><small>KILLS</small><b id="kills">0</b></div></div>
+ <div class="card"><div class="row" style="font-size:12px;justify-content:space-between"><span>EXPERIENCE</span><span id="xpText">0 / 30</span></div><div class="bar"><span id="xpBar" style="width:0%"></span></div></div>
+ <div class="game"><canvas id="arena" width="1200" height="760"></canvas><aside id="scoreboard" class="scoreboard hidden" aria-live="polite"></aside><div id="overlay" class="overlay"><div class="modal"><div style="font-size:42px">☣️</div><h2 id="overlayTitle">Waiting for host</h2><p class="muted" id="overlayText">The host will start the game when everyone is ready.</p><div id="upgradeChoices"></div><button class="button primary hidden" id="nextStage">START NEXT STAGE</button></div></div></div>
+ <div class="card"><b>TEAM</b><div class="playerlist" id="team" style="margin-top:9px"></div></div>
+ <div class="row"><button class="button" id="leave">Leave room</button><span class="muted" id="gameMessage" style="font-size:12px;flex:3">Waiting for survivors.</span></div>
+ <div class="footer">WASD / arrow keys to move · Mouse to aim · Automatic fire · Space to dash · E near a downed teammate to revive · P to pause locally</div>
+</section>
+<p class="footer">Prototype note: the Node.js server is authoritative for room membership, movement, zombie AI, attacks, health, kills and stage state. Deploy the server publicly before friends can connect from other networks.</p>
+</main>
+<script type="module" src="./client.js"></script>
+</body></html>
